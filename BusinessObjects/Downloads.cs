@@ -12,7 +12,6 @@ using System.Net;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
-using System.Windows.Forms.Layout;
 
 namespace BusinessObjects
 {

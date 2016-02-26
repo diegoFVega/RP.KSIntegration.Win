@@ -62,11 +62,11 @@
 			// start
 			// 
 			this.start.Image = ((System.Drawing.Image)(resources.GetObject("start.Image")));
-			this.start.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
+			this.start.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			this.start.ImageKey = "(none)";
 			this.start.Location = new System.Drawing.Point(6, 19);
 			this.start.Name = "start";
-			this.start.Size = new System.Drawing.Size(75, 53);
+			this.start.Size = new System.Drawing.Size(75, 23);
 			this.start.TabIndex = 0;
 			this.start.Text = "Start";
 			this.start.UseVisualStyleBackColor = true;
@@ -75,17 +75,22 @@
 			// pause
 			// 
 			this.pause.Enabled = false;
+			this.pause.Image = ((System.Drawing.Image)(resources.GetObject("pause.Image")));
+			this.pause.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			this.pause.Location = new System.Drawing.Point(168, 19);
 			this.pause.Name = "pause";
 			this.pause.Size = new System.Drawing.Size(75, 23);
 			this.pause.TabIndex = 4;
 			this.pause.Text = "Pause";
+			this.pause.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			this.pause.UseVisualStyleBackColor = true;
 			this.pause.Click += new System.EventHandler(this.pause_Click);
 			// 
 			// stop
 			// 
 			this.stop.Enabled = false;
+			this.stop.Image = ((System.Drawing.Image)(resources.GetObject("stop.Image")));
+			this.stop.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			this.stop.Location = new System.Drawing.Point(87, 19);
 			this.stop.Name = "stop";
 			this.stop.Size = new System.Drawing.Size(75, 23);

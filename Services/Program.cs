@@ -1,8 +1,5 @@
-﻿using System;
-using Services.Datawarehouse;
-using System.Collections.Generic;
+﻿using Services.Datawarehouse;
 using System.Windows.Forms;
-using System.ServiceProcess;
 
 namespace Services
 {

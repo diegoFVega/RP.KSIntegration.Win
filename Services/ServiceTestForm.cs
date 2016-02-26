@@ -1,15 +1,6 @@
 ﻿using System;
-using System.Windows.Forms;
-using System.Collections;
-using System.ComponentModel;
-using System.Data;
-using System.Diagnostics;
 using System.ServiceProcess;
-using Microsoft.Win32;
-using System.Timers;
-using System.Threading;
-using System.IO;
-using System.Security;
+using System.Windows.Forms;
 
 namespace Services
 {
