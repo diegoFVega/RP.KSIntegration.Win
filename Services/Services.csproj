@@ -89,6 +89,7 @@
     <Compile Include="ServiceTestForm.Designer.cs">
       <DependentUpon>ServiceTestForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Utilities\CommonDatabaseUtilities.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -123,7 +124,16 @@
       <DependentUpon>ServiceTestForm.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\DataType\DataType.csproj">
+      <Project>{11492894-4d0e-4a0f-871e-3a15d987e760}</Project>
+      <Name>DataType</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Engine\Engine.csproj">
+      <Project>{929ea272-b3f9-47da-8a33-803cc80546f7}</Project>
+      <Name>Engine</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

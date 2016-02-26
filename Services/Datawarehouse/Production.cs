@@ -6,6 +6,8 @@ using System.Text;
 using System.Threading;
 using System.Timers;
 using System.Windows.Forms;
+using Engine.Operations;
+using Services.Utilities;
 
 namespace Services.Datawarehouse
 {
@@ -93,16 +95,19 @@ namespace Services.Datawarehouse
 			var infoMessage = new StringBuilder();
 			var now = DateTime.Now;
 			var startProcessTime = Convert.ToDateTime(ConfigurationManager.AppSettings["DWStartTime"]);
-
+			
 			try
 			{
-				//if (DateTime.Now.ToString("HH:mm") == startProcessTime.ToString("HH:mm"))
-				//{
-				var daysBefore = Convert.ToInt32(ConfigurationManager.AppSettings["DWDaysBeforeDownload"]);
-				var startProcess = now.Date.AddDays(-daysBefore);
+				if (DateTime.Now.ToString("HH:mm") == startProcessTime.ToString("HH:mm"))
+				{
+					var daysBefore = Convert.ToInt32(ConfigurationManager.AppSettings["DWDaysBeforeDownload"]);
+					var startDate = now.Date.AddDays(-daysBefore).ToString("yyyy-MM-dd");
+					var finishDate = now.Date.ToString("yyyy-MM-dd");
+					var dataWarehouseOps = new DataWarehouseOps(CommonDatabaseUtilities.CurrentActiveConnectionString());
 
-				MessageBox.Show(string.Format("dumb process {0} - {1}", now.ToString("yyyy-MM-dd"), startProcess.ToString("yyyy-MM-dd")));
-				//}
+					dataWarehouseOps.GetProductionFromPS(startDate, finishDate, ref infoMessage);
+					dataWarehouseOps.SendProductionToDW(startDate, finishDate, ref infoMessage);
+				}
 			}
 			catch(Exception ex)
 			{
