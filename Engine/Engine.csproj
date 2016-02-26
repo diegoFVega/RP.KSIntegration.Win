@@ -1,0 +1,124 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{929EA272-B3F9-47DA-8A33-803CC80546F7}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Engine</RootNamespace>
+    <AssemblyName>Engine</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <GenerateSerializationAssemblies>On</GenerateSerializationAssemblies>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>Engine.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="AWSSDK.Core">
+      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\AWS SDK for .NET\bin\Net35\AWSSDK.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="AWSSDK.SQS">
+      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\AWS SDK for .NET\bin\Net35\AWSSDK.SQS.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="iAnywhere.Data.SQLAnywhere.v4.0, Version=16.0.0.20524, Culture=neutral, PublicKeyToken=f222fc4333e0d400, processorArchitecture=MSIL">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.8.0.1\lib\net40\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Net" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="EngineDataHelper.cs" />
+    <Compile Include="EngineOperationHelper.cs" />
+    <Compile Include="EngineQueueHelper.cs" />
+    <Compile Include="Enum\EngineDataHelperMode.cs" />
+    <Compile Include="Enum\HttpVerb.cs" />
+    <Compile Include="Enum\ReplaceBoxCodeMode.cs" />
+    <Compile Include="Operations\DataWarehouseOps.cs" />
+    <Compile Include="Operations\DownloadOps.cs" />
+    <Compile Include="Operations\DownloadsOps\Customer.cs" />
+    <Compile Include="Operations\DownloadsOps\Invoice.cs" />
+    <Compile Include="Operations\DownloadsOps\PurchaseOrder.cs" />
+    <Compile Include="Operations\IntegrationOps.cs" />
+    <Compile Include="Operations\IntegrationsOps\Customer.cs" />
+    <Compile Include="Operations\IntegrationsOps\Invoice.cs" />
+    <Compile Include="Operations\IntegrationsOps\PurchaseOrder.cs" />
+    <Compile Include="Operations\MailOps.cs" />
+    <Compile Include="Operations\ResourcesOps\ApiAddress.Designer.cs" />
+    <Compile Include="Operations\ResourcesOps\Queries.Designer.cs" />
+    <Compile Include="Operations\SaveInformationOps.cs" />
+    <Compile Include="Operations\TransactionsOps\Invoice.cs" />
+    <Compile Include="Operations\TransactionsOps\PurchaseOrder.cs" />
+    <Compile Include="Operations\UploadOps.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utilities\DataColumnComparer.cs" />
+    <Compile Include="Utilities\DataRowExtension.cs" />
+    <Compile Include="Utilities\DataSetExtension.cs" />
+    <Compile Include="Utilities\DataTableExtension.cs" />
+    <Compile Include="Utilities\DocumentExtension.cs" />
+    <Compile Include="Utilities\ListExtension.cs" />
+    <Compile Include="Utilities\SortedListExtension.cs" />
+    <Compile Include="Utilities\StreamExtension.cs" />
+    <Compile Include="Utilities\StringExtension.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DataType\DataType.csproj">
+      <Project>{11492894-4d0e-4a0f-871e-3a15d987e760}</Project>
+      <Name>DataType</Name>
+      <Private>True</Private>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Operations\ResourcesOps\ApiAddress.resx" />
+    <EmbeddedResource Include="Operations\ResourcesOps\Queries.resx" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <None Include="Engine.snk" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

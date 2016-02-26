@@ -1,0 +1,45 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="BusinessObjects.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="KometUsername" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">ruben.vasquez@rosaprima.com</Value>
+    </Setting>
+    <Setting Name="KometPassword" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">komet2015</Value>
+    </Setting>
+    <Setting Name="PrdEnvironment" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">UserID=serviciosps;Password=servicios;ServerName=bdprima;Compress=Yes;Connection Timeout=60;Connection Lifetime=5;Persist Security Info=True;Host=192.168.1.101:2638</Value>
+    </Setting>
+    <Setting Name="UATEnvironment" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">UserID=serviciosps;Password=servicios;ServerName=tempobdp;Compress=Yes;Persist Security Info=True;Host=192.168.1.101:50399;Connection Timeout=60; Pooling = False; Min Pool Size = 1; Max Pool Size = 6;Connection Lifetime = 5</Value>
+    </Setting>
+    <Setting Name="KometExternalAppId" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">12</Value>
+    </Setting>
+    <Setting Name="MailUsername" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">coreprima@outlook.com</Value>
+    </Setting>
+    <Setting Name="MailPassword" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">123123Dba2</Value>
+    </Setting>
+    <Setting Name="MailAddress" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">smtp-mail.outlook.com</Value>
+    </Setting>
+    <Setting Name="MailPort" Type="System.Int32" Scope="Application">
+      <Value Profile="(Default)">587</Value>
+    </Setting>
+    <Setting Name="MailSsl" Type="System.Boolean" Scope="Application">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="MailFrom" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">jhoanna.torres@rosaprima.com</Value>
+    </Setting>
+    <Setting Name="MailTo" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">helpdesk@rosaprima.com</Value>
+    </Setting>
+    <Setting Name="test" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+  </Settings>
+</SettingsFile>
