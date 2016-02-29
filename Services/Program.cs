@@ -1,4 +1,5 @@
 ﻿using Services.Datawarehouse;
+using System.ServiceProcess;
 using System.Windows.Forms;
 
 namespace Services
@@ -18,7 +19,8 @@ namespace Services
 			ServiceBase[] ServicesToRun;
 			ServicesToRun = new ServiceBase[]
 			{
-								new Production()
+								new Production(),
+								new Sale()
 			};
 			ServiceBase.Run(ServicesToRun);
 #endif

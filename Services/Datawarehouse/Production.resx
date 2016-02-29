@@ -117,23 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <metadata name="NiServicioProduccion.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>17, 95</value>
-  </metadata>
-  <metadata name="CmsManejaServicio.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>17, 56</value>
-  </metadata>
-  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="toolStripMenuItem1.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAAO1JREFUOE+l
-        kjsKwkAQhoPeQNDKRgQLwStoJ+IFvIRoI4KVp7D1CtpZ+Cq9lv83ebhJNomwH3ywj5nJ7myiCrpyJQ+J
-        jFlrpCfP8ibXcp7ImDX2iPEykR85tZkf9oghNgdV2ejbrB5iiM2dhKO5X+7IkxzZrAyx5Bg0h/u5zORF
-        3uVOtmURcqyxdJgmuVDgKFtyK19yLF3IIdeeiU67pAVShpIiC5vFkEPuXwUG8imXNovJCjRdYSPfsvh0
-        2RWqmniVD7mXtU2EoGeE4B8Jgn7lFKpyNO5Hk+g0MmaNvdKXfdAcOswzIeOsYT+i6Auvby85hSffUgAA
-        AABJRU5ErkJggg==
-</value>
-  </data>
   <metadata name="EvlIssue.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 19</value>
   </metadata>

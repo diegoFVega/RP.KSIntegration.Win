@@ -17,6 +17,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Services", "Services\Servic
 EndProject
 Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "UIXSetup", "UIXSetup\UIXSetup.vdproj", "{E860F77F-0C08-4D0F-B93B-A3413CA26D62}"
 EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "ServiceSetup", "ServiceSetup\ServiceSetup.vdproj", "{8C6ACD2B-F1C2-4627-9474-4670FF3FD5A2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -47,6 +49,8 @@ Global
 		{6562BB1F-B69A-4607-AAE5-63FE40CE9C7B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E860F77F-0C08-4D0F-B93B-A3413CA26D62}.Debug|Any CPU.ActiveCfg = Debug
 		{E860F77F-0C08-4D0F-B93B-A3413CA26D62}.Release|Any CPU.ActiveCfg = Release
+		{8C6ACD2B-F1C2-4627-9474-4670FF3FD5A2}.Debug|Any CPU.ActiveCfg = Debug
+		{8C6ACD2B-F1C2-4627-9474-4670FF3FD5A2}.Release|Any CPU.ActiveCfg = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

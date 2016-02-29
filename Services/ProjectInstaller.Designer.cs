@@ -30,23 +30,30 @@
 		{
 			this.serviceProcessInstaller1 = new System.ServiceProcess.ServiceProcessInstaller();
 			this.serviceInstaller1 = new System.ServiceProcess.ServiceInstaller();
+			this.serviceInstaller2 = new System.ServiceProcess.ServiceInstaller();
 			// 
 			// serviceProcessInstaller1
 			// 
-			this.serviceProcessInstaller1.Account = System.ServiceProcess.ServiceAccount.LocalService;
+			this.serviceProcessInstaller1.Account = System.ServiceProcess.ServiceAccount.LocalSystem;
 			this.serviceProcessInstaller1.Password = null;
 			this.serviceProcessInstaller1.Username = null;
 			// 
 			// serviceInstaller1
 			// 
 			this.serviceInstaller1.DisplayName = "Rosaprima Production Datawarehouse Service";
-			this.serviceInstaller1.ServiceName = "Production";
+			this.serviceInstaller1.ServiceName = "Rosaprima Production Datawarehouse Service";
+			// 
+			// serviceInstaller2
+			// 
+			this.serviceInstaller2.DisplayName = "Rosaprima Sales Datawarehouse Service";
+			this.serviceInstaller2.ServiceName = "Rosaprima Sales Datawarehouse Service";
 			// 
 			// ProjectInstaller
 			// 
 			this.Installers.AddRange(new System.Configuration.Install.Installer[] {
             this.serviceProcessInstaller1,
-            this.serviceInstaller1});
+            this.serviceInstaller1,
+            this.serviceInstaller2});
 
 		}
 
@@ -54,5 +61,6 @@
 
 		private System.ServiceProcess.ServiceProcessInstaller serviceProcessInstaller1;
 		private System.ServiceProcess.ServiceInstaller serviceInstaller1;
+		private System.ServiceProcess.ServiceInstaller serviceInstaller2;
 	}
 }
