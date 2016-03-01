@@ -84,7 +84,7 @@ namespace Services.Datawarehouse
 		private void ProcesoAEjecutar()
 		{
 			var currentTime = DateTime.Now;
-			var startProcessTime = Convert.ToDateTime(ConfigurationManager.AppSettings["DWStartTime"]);
+			var startProcessTime = Convert.ToDateTime(ConfigurationManager.AppSettings["DWCnfStartTime"]);
 			var eventType = EventLogEntryType.Information;
 
 			try

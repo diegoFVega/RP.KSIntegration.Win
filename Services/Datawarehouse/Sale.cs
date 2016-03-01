@@ -69,6 +69,8 @@ namespace Services.Datawarehouse
 				Name = "Rosaprima Sales Datawarehouse Service",
 				Priority = ThreadPriority.Normal
 			}.Start();
+
+			infoMessage.Clear();
 		}
 
 		private static TimeSpan IdleTimeToStart()
@@ -129,6 +131,8 @@ namespace Services.Datawarehouse
 
 						infoMessage.AppendLine("-> D. Integrando información en Primasoft");
 						integrateInvoice.IntegrateInvoiceInformation(ref _dSetInvoice, ref infoMessage);
+
+						daysBefore -= 1;
 					}
 					while (daysBefore >= 1);
 				}
@@ -158,7 +162,7 @@ namespace Services.Datawarehouse
 
 				var elapsedTime = DateTime.Now.Subtract(currentTime);
 
-				infoMessage.AppendLine(string.Format("Tiempo de ejecucion: {0}", elapsedTime.TotalSeconds));
+				infoMessage.AppendLine(string.Format("Tiempo de ejecucion: {0:0.00} segundos", elapsedTime.TotalSeconds));
 				EvlIssue.WriteEntry(infoMessage.ToString(), eventType);
 
 				elapsedTime = TimeSpan.Parse(ConfigurationManager.AppSettings["KSLatencyProcess"]);

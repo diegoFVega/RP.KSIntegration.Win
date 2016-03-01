@@ -14,7 +14,7 @@ namespace Services
 #if DEBUG
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
-			Application.Run(new ServiceTestForm(new Production()));
+			Application.Run(new ServiceTestForm(new Sale()));
 #else
 			ServiceBase[] ServicesToRun;
 			ServicesToRun = new ServiceBase[]
