@@ -1,14 +1,14 @@
-﻿using System;
+﻿using DataType.Login;
+using Engine.Operations;
+using Services.Utilities;
+using System;
 using System.Configuration;
+using System.Data;
 using System.Diagnostics;
 using System.ServiceProcess;
 using System.Text;
 using System.Threading;
 using System.Timers;
-using Engine.Operations;
-using Services.Utilities;
-using DataType.Login;
-using System.Data;
 
 namespace Services.Datawarehouse
 {
@@ -36,6 +36,7 @@ namespace Services.Datawarehouse
 		}
 
 #if DEBUG
+
 		protected virtual void OnStop(string[] args)
 		{
 			OnStop();
@@ -45,6 +46,7 @@ namespace Services.Datawarehouse
 		{
 			OnPause();
 		}
+
 #endif
 
 		protected override void OnStop()
@@ -100,7 +102,11 @@ namespace Services.Datawarehouse
 					var downloadInvoice = new Engine.Operations.DownloadsOps.Invoice();
 					var integrateInvoice = new Engine.Operations.IntegrationsOps.Invoice(CommonDatabaseUtilities.CurrentActiveConnectionString());
 					var transactionInvoice = new Engine.Operations.TransactionsOps.Invoice(CommonDatabaseUtilities.CurrentActiveConnectionString());
+					var dataWarehouseOps = new DataWarehouseOps(CommonDatabaseUtilities.CurrentActiveConnectionString());
 					var _dSetInvoice = new DataSet();
+
+					var startDate = currentTime.Date.AddDays(-daysBefore).ToString("yyyy-MM-dd");
+					var endDate = currentTime.Date.AddDays(-1).ToString("yyyy-MM-dd");
 
 					infoMessage.AppendLine("-> A. Conectando a KometSales API");
 					var loginInfo = new DownloadOps(CommonDatabaseUtilities.CurrentActiveConnectionString()).DownloadLoginInformation(
@@ -121,8 +127,8 @@ namespace Services.Datawarehouse
 						downloadInvoice.ShipDate = downloadDate;
 						integrateInvoice.ShipDate = downloadDate;
 
-						infoMessage.AppendLine(string.Format("-> Dia a descargar: {0}", downloadDate));
 						infoMessage.AppendLine(string.Empty);
+						infoMessage.AppendLine(string.Format("-> Dia a descargar: {0}", downloadDate));
 						infoMessage.AppendLine("-> B. Limpiando el espacio de trabajo");
 						transactionInvoice.CleanWorkspace(downloadDate, ref infoMessage);
 
@@ -135,10 +141,14 @@ namespace Services.Datawarehouse
 						daysBefore -= 1;
 					}
 					while (daysBefore >= 1);
+
+					infoMessage.AppendLine(string.Empty);
+					infoMessage.AppendLine(string.Format("-> E. Enviando información al datawarehouse, desde {0} hasta {1}", startDate, endDate));
+					dataWarehouseOps.SendInvoicesToDW(startDate, endDate, ref infoMessage);
 				}
 				else
 				{
-					infoMessage.AppendLine(string.Format("-> Proceso inactivo, trabajo a las {0}", ConfigurationManager.AppSettings["DWTimeToSend"]));
+					infoMessage.AppendLine(string.Format("-> Proceso inactivo, trabajo a las {0}", ConfigurationManager.AppSettings["DWStartTime"]));
 					infoMessage.AppendLine("Gracias por su comprensión.");
 
 					eventType = EventLogEntryType.Warning;

@@ -1,17 +1,20 @@
-﻿using System;
+﻿using DataType.Login;
+using Engine.Operations;
+using Services.Utilities;
+using System;
 using System.Configuration;
 using System.Diagnostics;
 using System.ServiceProcess;
 using System.Text;
 using System.Threading;
 using System.Timers;
-using System.Windows.Forms;
 
 namespace Services.Datawarehouse
 {
 	partial class Customer : ServiceBase
 	{
 		private readonly System.Timers.Timer _controlServiceTimer;
+		private StringBuilder infoMessage = new StringBuilder();
 
 		public Customer()
 		{
@@ -21,9 +24,8 @@ namespace Services.Datawarehouse
 
 		protected override void OnStart(string[] args)
 		{
-			var infoMessage = new StringBuilder();
-
-			//infoMessage.AppendLine("Proceso de descarga a standing area iniciará en: {0}", IdleTimeToStart().ToString("T"));
+			infoMessage.AppendLine(string.Format("-> El proceso de descarga a Staging area iniciará en: {0}", IdleTimeToStart().ToString("T")));
+			EvlIssue.WriteEntry(infoMessage.ToString(), EventLogEntryType.Warning);
 
 			_controlServiceTimer.Interval = IdleTimeToStart().TotalMilliseconds;
 			_controlServiceTimer.AutoReset = true;
@@ -32,12 +34,22 @@ namespace Services.Datawarehouse
 			_controlServiceTimer.Elapsed += new ElapsedEventHandler(ControlServiceTimer_Elapsed);
 		}
 
+#if DEBUG
+
+		protected virtual void OnStop(string[] args)
+		{
+			OnStop();
+		}
+
+		protected virtual void OnPause(string[] args)
+		{
+			OnPause();
+		}
+
+#endif
+
 		protected override void OnStop()
 		{
-			NiServicioCliente.BalloonTipIcon = ToolTipIcon.Info;
-			NiServicioCliente.BalloonTipTitle = "Stoping service...";
-			NiServicioCliente.BalloonTipText = "Se ha detenido el proceso";
-			NiServicioCliente.ShowBalloonTip(60000);
 			_controlServiceTimer.AutoReset = false;
 			_controlServiceTimer.Enabled = false;
 			GC.Collect();
@@ -55,15 +67,13 @@ namespace Services.Datawarehouse
 
 			new Thread(new ThreadStart(ProcesoAEjecutar))
 			{
-				Name = "Rosaprima Production Datawarehouse Service",
+				Name = "Rosaprima Customer Datawarehouse Service",
 				Priority = ThreadPriority.Normal
 			}.Start();
+
+			infoMessage.Clear();
 		}
 
-		/// <summary>
-		/// Calcula el tiempo de la proxima ejecución basado en la fecha y hora actual, utiliza un mecanismo de compensación para que su funcionamiento sea con la recurrencia indicada
-		/// </summary>
-		/// <returns>La hora de la proxima ejecución</returns>
 		private static TimeSpan IdleTimeToStart()
 		{
 			var currentTime = TimeSpan.Parse(DateTime.Now.ToString("HH:mm:ss"));
@@ -79,18 +89,44 @@ namespace Services.Datawarehouse
 
 		private void ProcesoAEjecutar()
 		{
-			var infoMessage = new StringBuilder();
-			var now = DateTime.Now;
-			var startProcessTime = Convert.ToDateTime(ConfigurationManager.AppSettings["DWStartTime"]);
+			var currentTime = DateTime.Now;
+			var startProcessTime = Convert.ToDateTime(ConfigurationManager.AppSettings["DWCnfStartTime"]);
+			var eventType = EventLogEntryType.Information;
 
 			try
 			{
-				//if (DateTime.Now.ToString("HH:mm") == startProcessTime.ToString("HH:mm"))
+				//if (currentTime.ToString("HH:mm") == startProcessTime.ToString("HH:mm"))
 				//{
-				var daysBefore = Convert.ToInt32(ConfigurationManager.AppSettings["DWDaysBeforeDownload"]);
-				var startProcess = now.Date.AddDays(-daysBefore);
+				var customerOps = new Engine.Operations.DownloadsOps.Customer();
+				var integrationOps = new Engine.Operations.IntegrationsOps.Customer(CommonDatabaseUtilities.CurrentActiveConnectionString());
+				var dataWarehouseOps = new DataWarehouseOps(CommonDatabaseUtilities.CurrentActiveConnectionString());
 
-				MessageBox.Show(string.Format("dumb process {0} - {1}", now.ToString("yyyy-MM-dd"), startProcess.ToString("yyyy-MM-dd")));
+				infoMessage.AppendLine("-> Descarga de clientes");
+				infoMessage.AppendLine("-> A. Conectando a KometSales API");
+				var loginInfo = new DownloadOps(CommonDatabaseUtilities.CurrentActiveConnectionString()).DownloadLoginInformation(
+						new LoginInformation()
+						{
+							User = ConfigurationManager.AppSettings["KometUsername"],
+							Password = ConfigurationManager.AppSettings["KometPassword"],
+							ApiToken = ConfigurationManager.AppSettings["KometToken"]
+						}, LoginMode.UseUserAndPassword, ref infoMessage);
+
+				infoMessage.AppendLine("-> B. Obtener informacion de clientes desde PS");
+				customerOps.CurrentLogin = loginInfo;
+				var dSet = customerOps.DownloadCustomerInformation(ref infoMessage);
+
+				infoMessage.AppendLine("-> C. Integrar información de clientes");
+				integrationOps.IntegrateCustomerInformation(ref dSet, ref infoMessage);
+
+				infoMessage.AppendLine("-> D. Envio de informacion de clientes a DW");
+				dataWarehouseOps.SendCustomerToDW(ref infoMessage);
+				//}
+				//else
+				//{
+				//	infoMessage.AppendLine(string.Format("-> Proceso inactivo, trabajo a las {0}", ConfigurationManager.AppSettings["DWCnfStartTime"]));
+				//	infoMessage.AppendLine("Gracias por su comprensión.");
+
+				//	eventType = EventLogEntryType.Warning;
 				//}
 			}
 			catch (Exception ex)
@@ -103,25 +139,20 @@ namespace Services.Datawarehouse
 				infoMessage.AppendLine(string.Format("Trace: {0}", ex.StackTrace));
 				infoMessage.AppendLine("-------------------------------------------");
 
-				//_mailer.SendANotification(infoMessage.ToString(), string.Format("error en servicio: {0}", ServiceName));
-				EvlIssue.WriteEntry(infoMessage.ToString(), EventLogEntryType.Error);
-				NiServicioCliente.BalloonTipIcon = ToolTipIcon.Error;
+				eventType = EventLogEntryType.Error;
 			}
 			finally
 			{
-				var elapsedTime = DateTime.Now.Subtract(now);
+				infoMessage.AppendLine("Fin de proceso");
 
-				NiServicioCliente.BalloonTipIcon = ToolTipIcon.Info;
-				elapsedTime = IdleTimeToStart();
+				var elapsedTime = DateTime.Now.Subtract(currentTime);
+
+				infoMessage.AppendLine(string.Format("Tiempo de ejecucion: {0}", elapsedTime.TotalSeconds));
+				EvlIssue.WriteEntry(infoMessage.ToString(), eventType);
+
 				elapsedTime = TimeSpan.Parse(ConfigurationManager.AppSettings["KSLatencyProcess"]);
 				Thread.Sleep(elapsedTime.Milliseconds);
-
-				elapsedTime = IdleTimeToStart();
-
-				_controlServiceTimer.Interval = elapsedTime.TotalMilliseconds;
-				NiServicioCliente.BalloonTipTitle = "Process results...";
-				NiServicioCliente.BalloonTipText = string.Format("Tiempo de ejecucion: {0}", elapsedTime.ToString("T"));
-				NiServicioCliente.ShowBalloonTip(60000);
+				_controlServiceTimer.Interval = IdleTimeToStart().TotalMilliseconds;
 				_controlServiceTimer.Start();
 			}
 		}

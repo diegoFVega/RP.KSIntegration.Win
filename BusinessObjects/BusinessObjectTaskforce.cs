@@ -148,7 +148,7 @@ namespace BusinessObjects
 
 				foreach (var item in lista)
 				{
-					poString.AppendFormat((num < lista.Count?"{0},":"{0}"), item.PONumber);
+					poString.AppendFormat((num < lista.Count ? "{0}," : "{0}"), item.PONumber);
 					num++;
 				}
 
@@ -165,7 +165,8 @@ namespace BusinessObjects
 
 				foreach (var item in poGroup)
 				{
-					_dSetPurchase = downloadPO.DownloadPurchaseOrderInformation(ref infoMessage, item.Substring(0, item.Length - 1));
+					var poNumber = item.Substring(0, item.Length - 1);
+					_dSetPurchase = downloadPO.DownloadPurchaseOrderInformation(ref infoMessage, poNumber);
 
 					if (_dSetPurchase.Tables.Count > 0)
 					{

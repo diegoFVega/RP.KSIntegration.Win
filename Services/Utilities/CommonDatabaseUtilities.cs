@@ -12,9 +12,11 @@ namespace Services.Utilities
 				case "Production":
 					str = ConfigurationManager.ConnectionStrings["PrimasoftPrdConnection"].ConnectionString;
 					break;
+
 				case "Test":
 					str = ConfigurationManager.ConnectionStrings["PrimasoftUATConnection"].ConnectionString;
 					break;
+
 				case "Sales":
 					str = ConfigurationManager.ConnectionStrings["PrimasoftSlsConnection"].ConnectionString;
 					break;

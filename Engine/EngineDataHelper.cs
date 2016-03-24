@@ -191,7 +191,7 @@ namespace Engine
 				{
 					destinationTable = ((DataSet)GetQueryResult(ref activeConnection, string.Format("Select Top(1) * from {0} with(nolock)", tableName), CommandType.Text, EngineDataHelperMode.ResultSet)).Tables[0];
 					saBulkCopy.DestinationTableName = tableName;
-										
+
 					foreach (DataColumn dataColumn in originTable.Columns.OfType<DataColumn>())
 					{
 						if (destinationTable.Columns.IndexOf(dataColumn.ColumnName) != -1)

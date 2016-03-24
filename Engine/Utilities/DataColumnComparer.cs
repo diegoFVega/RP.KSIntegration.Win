@@ -5,7 +5,7 @@ namespace Engine.Utilities
 {
 	internal class DataColumnComparer : IEqualityComparer<DataColumn>
 	{
-		public static DataColumnComparer ColumnInstance {get; set;}
+		public static DataColumnComparer ColumnInstance { get; set; }
 
 		private DataColumnComparer()
 		{

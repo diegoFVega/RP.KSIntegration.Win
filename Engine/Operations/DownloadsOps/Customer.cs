@@ -39,6 +39,7 @@ namespace Engine.Operations.DownloadsOps
 				stringBuilder.AppendLine("Ha ocurrido una excepcion en la ejecucion de la consulta.");
 				stringBuilder.AppendLine(string.Format("Mensaje: {0}", ex.Message));
 				stringBuilder.AppendLine(string.Format("Ubicacion: {0}", ex.TargetSite));
+				infoMessage = stringBuilder;
 				throw new Exception(stringBuilder.ToString());
 			}
 

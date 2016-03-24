@@ -2,6 +2,7 @@
 using BusinessObjects;
 using DataType.Login;
 using Engine;
+using Engine.Enum;
 using Engine.Operations;
 using System;
 using System.ComponentModel;
@@ -178,8 +179,10 @@ namespace UIX
 
 							foreach (var item in lista)
 							{
-								transactionPO.CleanWorkspace(ref infoMessage, poNumber: item.PONumber);
-								_dSetPurchase = downloadPO.DownloadPurchaseOrderInformation(ref infoMessage, item.PONumber);
+								var poNumberItem = item.PONumber;
+
+								transactionPO.CleanWorkspace(ref infoMessage, poNumber: poNumberItem);
+								_dSetPurchase = downloadPO.DownloadPurchaseOrderInformation(ref infoMessage, poNumberItem);
 								integratePO.IntegratePurchaseOrderInformation(ref _dSetPurchase, ref infoMessage);
 
 								if ((_dSetPurchase.Tables.Count > 0) || (_dSetPurchase.Tables["purchaseOrders"] != null))
@@ -188,12 +191,13 @@ namespace UIX
 
 									foreach (DataRow row in _dSetPurchase.Tables["purchaseOrders"].Rows.OfType<DataRow>())
 									{
+										var poNumberRow = row["number"].ToString();
 										_dSetVendorAvailability = downloadOps.DownloadVendorAvailabilityInformation(_loginInfo,
-											row["number"].ToString(), ref infoMessage);
+											poNumberRow, ref infoMessage);
 
 										if (_dSetVendorAvailability.Tables.Count > 0)
 										{
-											integrationOps.IntegrateVendorAvailabilityInformation(ref _dSetVendorAvailability, ref infoMessage);
+											integrationOps.IntegrateVendorAvailabilityInformation(poNumberRow, ref _dSetVendorAvailability, ref infoMessage);
 										}
 									}
 								}
@@ -601,12 +605,14 @@ namespace UIX
 					case KsActionType.UpdateToKs:
 						UpdateKsInformation(TvwKsElements.Nodes[0]);
 						break;
-						//case KsActionType.ReplaceBoxCodesNormal:
-						//	ReplaceBoxCodes();
-						//	break;
-						//case KsActionType.ReplaceBoxCodesFutureSales:
-						//	ReplaceBoxCodes(ReplaceBoxCodeMode.FutureSales);
-						//	break;
+
+					case KsActionType.ReplaceBoxCodesNormal:
+						ReplaceBoxCodes();
+						break;
+
+					case KsActionType.ReplaceBoxCodesFutureSales:
+						ReplaceBoxCodes(ReplaceBoxCodeMode.FutureSales);
+						break;
 				}
 			}
 			catch (Exception ex)
@@ -640,18 +646,13 @@ namespace UIX
 			}
 		}
 
-		//private void ReplaceBoxCodes(ReplaceBoxCodeMode replaceMode = Engine.Enum.ReplaceBoxCodeMode.Normal)
-		//{
-		//	var uploadOps = new UploadOps(CommonDatabaseUtilities.CurrentActiveConnectionString());
-		//	var infoMessage = new StringBuilder();
-		//	ChangeStatusMessage("Enviando información de Boxcodes a reemplazar");
-		//	ChangeStatusMessage(uploadOps.ReplaceKsBoxCode(_loginInfo, _fechaProceso, replaceMode, ref infoMessage));
-		//}
-
-		//private void toolStripButton2_Click(object sender, EventArgs e)
-		//{
-		//	//new FrmConfiguration().Show();
-		//}
+		private void ReplaceBoxCodes(ReplaceBoxCodeMode replaceMode = Engine.Enum.ReplaceBoxCodeMode.Normal)
+		{
+			var uploadOps = new UploadOps(CommonDatabaseUtilities.CurrentActiveConnectionString());
+			var infoMessage = new StringBuilder();
+			ChangeStatusMessage("Enviando información de Boxcodes a reemplazar");
+			ChangeStatusMessage(uploadOps.ReplaceKsBoxCode(_loginInfo, _fechaProceso, replaceMode, ref infoMessage));
+		}
 
 		private void futureSalesToolStripMenuItem_Click(object sender, EventArgs e)
 		{

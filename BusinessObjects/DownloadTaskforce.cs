@@ -120,12 +120,12 @@ namespace BusinessObjects
 					{
 						var poStatus = "DS";
 						var poMessage = "Successfull.";
+						var poNumberItem = poItem.Substring(0, poItem.Length - 1);
 
-						transactionPo.CleanWorkspace(ref infoMessage, poNumber: poItem.Substring(0, poItem.Length - 1));
+						transactionPo.CleanWorkspace(ref infoMessage, poNumber: poNumberItem);
 
 						DataSet dSetPurchase;
-						using (dSetPurchase = downloadPo.DownloadPurchaseOrderInformation(ref infoMessage,
-							poItem.Substring(0, poItem.Length - 1)))
+						using (dSetPurchase = downloadPo.DownloadPurchaseOrderInformation(ref infoMessage, poNumberItem))
 						{
 							if (dSetPurchase.Tables.Count > 0)
 							{
@@ -133,16 +133,16 @@ namespace BusinessObjects
 
 								foreach (DataRow rowLista in dSetPurchase.Tables[0].Rows.OfType<DataRow>())
 								{
-									var poNumber = rowLista["number"].ToString();
+									var poNumberId = rowLista["number"].ToString();
 
 									try
 									{
 										var dSetVendorAvailability = downloadOps.DownloadVendorAvailabilityInformation(loginInfo,
-											poNumber, ref infoMessage);
+											poNumberId, ref infoMessage);
 
 										if (dSetVendorAvailability.Tables.Count > 0)
 										{
-											integrationOps.IntegrateVendorAvailabilityInformation(ref dSetVendorAvailability, ref infoMessage);
+											integrationOps.IntegrateVendorAvailabilityInformation(poNumberId, ref dSetVendorAvailability, ref infoMessage);
 										}
 										else
 										{
@@ -157,7 +157,7 @@ namespace BusinessObjects
 									}
 									finally
 									{
-										transactionPo.SaveStackInformation(poNumber, poStatus, poMessage);
+										transactionPo.SaveStackInformation(poNumberId, poStatus, poMessage);
 									}
 								}
 							}
@@ -234,7 +234,7 @@ namespace BusinessObjects
 
 				if (dSetVendorAvailability.Tables.Count > 0)
 				{
-					integrationOps.IntegrateVendorAvailabilityInformation(ref dSetVendorAvailability, ref infoMessage);
+					integrationOps.IntegrateVendorAvailabilityInformation(poNumber, ref dSetVendorAvailability, ref infoMessage);
 				}
 			}
 			catch (Exception ex)

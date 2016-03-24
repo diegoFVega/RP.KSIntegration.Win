@@ -361,7 +361,7 @@ namespace Engine.Operations
 			}
 		}
 
-		public void IntegrateVendorAvailabilityInformation(ref DataSet dSet, ref StringBuilder infoMessage)
+		public void IntegrateVendorAvailabilityInformation(string poNumber, ref DataSet dSet, ref StringBuilder infoMessage)
 		{
 			var stringBuilder = new StringBuilder();
 			var engineDataHelper = new EngineDataHelper
@@ -388,7 +388,12 @@ namespace Engine.Operations
 				}
 
 				infoMessage.AppendLine("g. Procesando por ETL las facturas");
-				engineDataHelper.GetQueryResult(Queries.VAEtl, CommandType.StoredProcedure, EngineDataHelperMode.NonResultSet);
+
+				var parameters = new SortedList<string, string>();
+				parameters.Clear();
+				parameters.Add("p_poNumber", poNumber);
+
+				engineDataHelper.GetQueryResult(Queries.VAEtl, CommandType.StoredProcedure, EngineDataHelperMode.NonResultSet, parameters);
 			}
 			catch (Exception ex)
 			{

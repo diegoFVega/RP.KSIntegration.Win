@@ -10,6 +10,6 @@
 		Upload,
 		UpdateToKs,
 		ReplaceBoxCodesNormal,
-		ReplaceBoxCodesFutureSales,
+		ReplaceBoxCodesFutureSales
 	}
 }

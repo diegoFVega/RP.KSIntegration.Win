@@ -56,6 +56,34 @@ namespace Engine.Operations
 			}
 		}
 
+		public void SendInvoicesToDW(string startDate, string endDate, ref StringBuilder infoMessage)
+		{
+			var stringBuilder = new StringBuilder();
+			var engineDataHelper = new EngineDataHelper
+			{
+				CurrentStringConnection = _currentConnectionString
+			};
+			var parameters = new SortedList<string, string>();
+			infoMessage.AppendLine("Integrando la facturacion en staging area");
+			try
+			{
+				parameters.Add("fec_ini", startDate);
+				parameters.Add("fec_fin", endDate);
+				engineDataHelper.GetQueryResult(Queries.SendInvoicesToDw, CommandType.StoredProcedure, EngineDataHelperMode.NonResultSet, parameters);
+			}
+			catch (Exception ex)
+			{
+				stringBuilder.AppendLine("Ha ocurrido una excepcion en la ejecucion de la consulta.");
+				stringBuilder.AppendLine(string.Format("Mensaje: {0}", ex.Message));
+				stringBuilder.AppendLine(string.Format("Ubicacion: {0}", ex.TargetSite));
+				throw new Exception(stringBuilder.ToString());
+			}
+			finally
+			{
+				engineDataHelper.Dispose();
+			}
+		}
+
 		public void SendProductionToDW(string productionDateStart, string productionDateEnd, ref StringBuilder infoMessage)
 		{
 			var stringBuilder = new StringBuilder();
@@ -118,6 +146,7 @@ namespace Engine.Operations
 				stringBuilder.AppendLine("Ha ocurrido una excepcion en la ejecucion de la consulta.");
 				stringBuilder.AppendLine(string.Format("Mensaje: {0}", ex.Message));
 				stringBuilder.AppendLine(string.Format("Ubicacion: {0}", ex.TargetSite));
+				infoMessage = stringBuilder;
 				throw new Exception(stringBuilder.ToString());
 			}
 		}

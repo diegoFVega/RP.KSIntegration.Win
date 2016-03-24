@@ -85,14 +85,14 @@ namespace Engine.Operations.TransactionsOps
 			};
 			var parameters = new SortedList<string, string>();
 
-			engineDataHelper.GetQueryResult("delete from ks_pods where poestado <> 'DS'", CommandType.Text, EngineDataHelperMode.NonResultSet);
+			engineDataHelper.GetQueryResult("delete from ks_pods where poestado <> 'TR'", CommandType.Text, EngineDataHelperMode.NonResultSet);
 
 			foreach (DataType.Purchase.ProcessablePO item in stack)
 			{
 				parameters.Clear();
 				parameters.Add("p_PoNumber", item.PONumber);
 				parameters.Add("p_PoStatus", "GE");
-				parameters.Add("p_PoMessage", "Download");
+				parameters.Add("p_PoMessage", "Downolad from Queue, ready for download PO and VA");
 
 				engineDataHelper.GetQueryResult("sp_KS_POStack", CommandType.StoredProcedure, EngineDataHelperMode.NonResultSet, parameters);
 			}

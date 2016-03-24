@@ -5,9 +5,10 @@ using System.Windows.Forms;
 namespace Services
 {
 #if DEBUG
+
 	public partial class ServiceTestForm : Form
 	{
-		ServiceBase service = null;
+		private ServiceBase service = null;
 
 		public ServiceTestForm()
 		{
@@ -15,21 +16,23 @@ namespace Services
 		}
 
 		#region State
+
 		/// <summary>
-		/// Since we can't have a ServiceController,
-		/// determine our own state.
+		/// Since we can't have a ServiceController, determine our own state.
 		/// </summary>
-		enum State
+		private enum State
 		{
 			Stopped,
 			Running,
 			Paused
 		}
-		State state = State.Stopped;
+
+		private State state = State.Stopped;
+
 		/// <summary>
 		/// Gets or sets service state. Allows start/stop/pause.
 		/// </summary>
-		State ServState
+		private State ServState
 		{
 			get { return state; }
 			set
@@ -45,6 +48,7 @@ namespace Services
 							throw new ApplicationException("Can't pause unless running.");
 						}
 						break;
+
 					case State.Running:
 						if (state == State.Stopped)
 							InvokeServiceMember("OnStart", new string[] { "" });
@@ -54,6 +58,7 @@ namespace Services
 							throw new ApplicationException("Can't start unless stopped.");
 						pause.Text = "Pause";
 						break;
+
 					case State.Stopped:
 						InvokeServiceMember("OnStop");
 						break;
@@ -61,26 +66,32 @@ namespace Services
 				state = value;
 			}
 		}
-		#endregion
+
+		#endregion State
 
 		/// <summary>
 		/// Create a test form for the given service.
 		/// </summary>
-		/// <param name="serv"> Instance of a ServiceBase derivation. </param>
+		/// <param name="serv">
+		/// Instance of a ServiceBase derivation.
+		/// </param>
 		public ServiceTestForm(ServiceBase serv)
 		{
 			service = serv;
 			InitializeComponent();
 		}
-		void InvokeServiceMember(string name)
+
+		private void InvokeServiceMember(string name)
 		{
 			InvokeServiceMember(name, null);
 		}
-		void InvokeServiceMember(string name, object args)
+
+		private void InvokeServiceMember(string name, object args)
 		{
 			InvokeServiceMember(name, new object[] { args });
 		}
-		void InvokeServiceMember(string name, object[] args)
+
+		private void InvokeServiceMember(string name, object[] args)
 		{
 			Type serviceType = service.GetType();
 			serviceType.InvokeMember(name,
@@ -94,6 +105,7 @@ namespace Services
 		}
 
 		#region Event Handlers
+
 		private void start_Click(object sender, EventArgs e)
 		{
 			try
@@ -114,6 +126,7 @@ namespace Services
 				this.Enabled = true;
 			}
 		}
+
 		private void stop_Click(object sender, EventArgs e)
 		{
 			try
@@ -134,6 +147,7 @@ namespace Services
 				this.Enabled = true;
 			}
 		}
+
 		private void pause_Click(object sender, EventArgs e)
 		{
 			try
@@ -163,7 +177,9 @@ namespace Services
 				this.Enabled = true;
 			}
 		}
-		#endregion
+
+		#endregion Event Handlers
 	}
+
 #endif
 }

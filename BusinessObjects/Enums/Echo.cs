@@ -3,6 +3,6 @@
 	public enum Echo
 	{
 		No,
-		Yes,
+		Yes
 	}
 }

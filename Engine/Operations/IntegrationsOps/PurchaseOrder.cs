@@ -66,6 +66,7 @@ namespace Engine.Operations.IntegrationsOps
 					}
 				}
 				infoMessage.AppendLine("g. Procesando por ETL las facturas");
+
 				engineDataHelper.GetQueryResult(Queries.POStandarizeInfo, CommandType.StoredProcedure, EngineDataHelperMode.NonResultSet);
 				engineDataHelper.GetQueryResult(Queries.POEtl, CommandType.StoredProcedure, EngineDataHelperMode.NonResultSet);
 			}

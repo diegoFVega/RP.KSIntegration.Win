@@ -141,8 +141,8 @@ namespace BusinessObjects
 
 							case "KsPurchase":
 								var infoMessage = new StringBuilder();
-								var prdEnvironment = Settings.Default.PrdEnvironment;
-								//var prdEnvironment = Settings.Default.UATEnvironment;
+								//var prdEnvironment = Settings.Default.PrdEnvironment;
+								var prdEnvironment = Settings.Default.UATEnvironment;
 								var downloadPO = new Engine.Operations.DownloadsOps.PurchaseOrder();
 								var integratePO = new Engine.Operations.IntegrationsOps.PurchaseOrder(prdEnvironment);
 								var transactionPO = new Engine.Operations.TransactionsOps.PurchaseOrder(prdEnvironment);
@@ -160,123 +160,94 @@ namespace BusinessObjects
 									var poString = string.Empty;
 									var num = 1;
 
-									switch (ChkMasiveProcess.Checked)
+									// leer cola de proceso
+									var dataOps = new EngineQueueHelper
 									{
-										case false:
-											// leer cola de proceso
-											var dataOps = new EngineQueueHelper
+										AccessKey = @"AKIAJEKLKC5HVQS3NJ7A",
+										SecretKey = @"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",
+										RegionEndpointPlace = RegionEndpoint.USEast1,
+										AmazonQueueAddress = @"https://sqs.us-east-1.amazonaws.com/905040198233/komet-sales-va-auto-packing-003"
+									};
+
+									transactionPO.CleanWorkspace(ref infoMessage, shipDate: DtpProcessDate.Text);
+
+									ChangeStatusMessage("Obtener datos de la cola");
+									var lista = dataOps.QueueProcess(ref infoMessage);
+
+									transactionPO.SaveStackInformation(lista);
+
+									var _dLista = transactionPO.RetrieveStackInformation();
+									ChangeStatusMessage(string.Format("Datos recuperados: {0}", lista.Count));
+
+									ChangeStatusMessage("Limpia area de trabajo");
+
+									if (_dLista.Tables.Count > 0)
+									{
+										ChangeStatusMessage("Descargar información de purchase orders");
+										foreach (DataRow item in _dLista.Tables[0].Rows.OfType<DataRow>())
+										{
+											poItems.AppendFormat("{0},", item["PONumber"]);
+											num++;
+										}
+
+										poString = poItems.ToString();
+
+										List<string> poGroup = new List<string>();
+										for (int i = 0; i < poString.Length; i += 80)
+										{
+											if ((i + 80) < poString.Length)
+												poGroup.Add(poString.Substring(i, 80));
+											else
+												poGroup.Add(poString.Substring(i));
+										}
+
+										foreach (string poItem in poGroup)
+										{
+											var poStatus = "DS";
+											var poMessage = "Successfull.";
+											var poNumberItem = poItem.Substring(0, poItem.Length - 1);
+
+											ChangeStatusMessage("Descargando información de purchase orders");
+											transactionPO.CleanWorkspace(ref infoMessage, poNumber: poNumberItem);
+
+											_dSetPurchase = downloadPO.DownloadPurchaseOrderInformation(ref infoMessage, poNumberItem);
+
+											if (_dSetPurchase.Tables.Count > 0)
 											{
-												AccessKey = @"AKIAJEKLKC5HVQS3NJ7A",
-												SecretKey = @"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",
-												RegionEndpointPlace = RegionEndpoint.USEast1,
-												AmazonQueueAddress = @"https://sqs.us-east-1.amazonaws.com/905040198233/komet-sales-va-auto-packing-003"
-											};
+												ChangeStatusMessage("Integrando información de purchase orders");
+												integratePO.IntegratePurchaseOrderInformation(ref _dSetPurchase, ref infoMessage);
 
-											transactionPO.CleanWorkspace(ref infoMessage, shipDate: DtpProcessDate.Text);
-
-											ChangeStatusMessage("Obtener datos de la cola");
-											var lista = dataOps.QueueProcess(ref infoMessage);
-
-											transactionPO.SaveStackInformation(lista);
-
-											var _dLista = transactionPO.RetrieveStackInformation();
-											ChangeStatusMessage(string.Format("Datos recuperados: {0}", lista.Count));
-
-											ChangeStatusMessage("Limpia area de trabajo");
-
-											if (_dLista.Tables.Count > 0)
-											{
-												ChangeStatusMessage("Descargar información de purchase orders");
-												foreach (DataRow item in _dLista.Tables[0].Rows.OfType<DataRow>())
+												foreach (DataRow rowLista in _dSetPurchase.Tables[0].Rows.OfType<DataRow>())
 												{
-													poItems.AppendFormat((num < _dLista.Tables[0].Rows.Count?"{0},":"{0}"), item["PONumber"]);
-													num++;
-												}
+													var poNumberId = rowLista["number"].ToString();
 
-												poString = poItems.ToString();
-
-												List<string> poGroup = new List<string>();
-												for (int i = 0; i < poString.Length; i += 80)
-												{
-													if ((i + 80) < poString.Length)
-														poGroup.Add(poString.Substring(i, 80));
-													else
-														poGroup.Add(poString.Substring(i));
-												}
-
-												foreach (string poItem in poGroup)
-												{
-													var poStatus = "DS";
-													var poMessage = "Successfull.";
-
-													ChangeStatusMessage("Descargando información de purchase orders");
-													transactionPO.CleanWorkspace(ref infoMessage, poNumber: poItem.Substring(0, poItem.Length - 1));
-
-													_dSetPurchase = downloadPO.DownloadPurchaseOrderInformation(ref infoMessage, poItem.Substring(0, poItem.Length - 1));
-
-													if (_dSetPurchase.Tables.Count > 0)
+													try
 													{
-														ChangeStatusMessage("Integrando información de purchase orders");
-														integratePO.IntegratePurchaseOrderInformation(ref _dSetPurchase, ref infoMessage);
+														var _dSetVendorAvailability = downloadOps.DownloadVendorAvailabilityInformation(_loginInfo,
+																poNumberId, ref infoMessage);
 
-														foreach (DataRow rowLista in _dSetPurchase.Tables[0].Rows.OfType<DataRow>())
+														if (_dSetVendorAvailability.Tables.Count > 0)
 														{
-															var poNumber = rowLista["number"].ToString();
-
-															try
-															{
-																var _dSetVendorAvailability = downloadOps.DownloadVendorAvailabilityInformation(_loginInfo,
-																		poNumber, ref infoMessage);
-
-																if (_dSetVendorAvailability.Tables.Count > 0)
-																{
-																	integrationOps.IntegrateVendorAvailabilityInformation(ref _dSetVendorAvailability, ref infoMessage);
-																}
-																else
-																{
-																	poStatus = "NV";
-																	poMessage = "No vendor availability";
-																}
-															}
-															catch (Exception ex)
-															{
-																poStatus = "ER";
-																poMessage = ex.Message;
-															}
-															finally
-															{
-																transactionPO.SaveStackInformation(poNumber, poStatus, poMessage);
-															}
+															integrationOps.IntegrateVendorAvailabilityInformation(poNumberId, ref _dSetVendorAvailability, ref infoMessage);
+														}
+														else
+														{
+															poStatus = "NV";
+															poMessage = "No vendor availability";
 														}
 													}
-												}
-											}
-											break;
-
-										case true:
-											ChangeStatusMessage("Limpiar espacio de trabajo.");
-											transactionPO.CleanWorkspace(ref infoMessage, shipDate: DtpProcessDate.Text);
-											ChangeStatusMessage(string.Format("Descargar datos con fecha {0}", DtpProcessDate.Text));
-											_dSetPurchase = downloadPO.DownloadPurchaseOrderInformation(ref infoMessage);
-											integratePO.IntegratePurchaseOrderInformation(ref _dSetPurchase, ref infoMessage);
-
-											ChangeStatusMessage(string.Format("Descargaron {0} tablas", _dSetPurchase.Tables.Count));
-											if ((_dSetPurchase.Tables.Count > 0) || (_dSetPurchase.Tables["purchaseOrders"] != null))
-											{
-												ChangeStatusMessage("Descargando Vendor Avalaibility");
-
-												foreach (DataRow row in _dSetPurchase.Tables["purchaseOrders"].Rows.OfType<DataRow>())
-												{
-													var _dSetVendorAvailability = downloadOps.DownloadVendorAvailabilityInformation(_loginInfo,
-														row["number"].ToString(), ref infoMessage);
-
-													if (_dSetVendorAvailability.Tables.Count > 0)
+													catch (Exception ex)
 													{
-														integrationOps.IntegrateVendorAvailabilityInformation(ref _dSetVendorAvailability, ref infoMessage);
+														poStatus = "ER";
+														poMessage = ex.Message;
+													}
+													finally
+													{
+														transactionPO.SaveStackInformation(poNumberId, poStatus, poMessage);
 													}
 												}
 											}
-											break;
+										}
 									}
 								}
 								catch (Exception ex)

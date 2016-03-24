@@ -1,12 +1,12 @@
-﻿using System;
+﻿using Engine.Operations;
+using Services.Utilities;
+using System;
 using System.Configuration;
 using System.Diagnostics;
 using System.ServiceProcess;
 using System.Text;
 using System.Threading;
 using System.Timers;
-using Engine.Operations;
-using Services.Utilities;
 
 namespace Services.Datawarehouse
 {
@@ -34,6 +34,7 @@ namespace Services.Datawarehouse
 		}
 
 #if DEBUG
+
 		protected virtual void OnStop(string[] args)
 		{
 			OnStop();
@@ -43,7 +44,9 @@ namespace Services.Datawarehouse
 		{
 			OnPause();
 		}
+
 #endif
+
 		protected override void OnStop()
 		{
 			_controlServiceTimer.AutoReset = false;
@@ -66,8 +69,10 @@ namespace Services.Datawarehouse
 				Name = "Rosaprima Production Datawarehouse Service",
 				Priority = ThreadPriority.Normal
 			}.Start();
+
+			infoMessage.Clear();
 		}
-		
+
 		private static TimeSpan IdleTimeToStart()
 		{
 			var currentTime = TimeSpan.Parse(DateTime.Now.ToString("HH:mm:ss"));
@@ -105,7 +110,7 @@ namespace Services.Datawarehouse
 				}
 				else
 				{
-					infoMessage.AppendLine(string.Format("-> Proceso inactivo, trabajo a las {0}", ConfigurationManager.AppSettings["DWTimeToSend"]));
+					infoMessage.AppendLine(string.Format("-> Proceso inactivo, trabajo a las {0}", ConfigurationManager.AppSettings["DWCnfStartTime"]));
 					infoMessage.AppendLine("Gracias por su comprensión.");
 
 					eventType = EventLogEntryType.Warning;
