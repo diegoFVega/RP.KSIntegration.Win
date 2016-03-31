@@ -1,4 +1,5 @@
 ﻿using Engine.Operations;
+using Engine.Utilities;
 using Services.Utilities;
 using System;
 using System.Configuration;
@@ -91,6 +92,17 @@ namespace Services.Datawarehouse
 			var currentTime = DateTime.Now;
 			var startProcessTime = Convert.ToDateTime(ConfigurationManager.AppSettings["DWCnfStartTime"]);
 			var eventType = EventLogEntryType.Information;
+			var sendAEmail = true;
+			// envio de correo
+			var correo = new MailOps();
+			correo.SmtpServer = ConfigurationManager.AppSettings["MailAddress"];
+			correo.SmtpPort = Convert.ToInt32(ConfigurationManager.AppSettings["MailPort"]);
+			correo.Username = ConfigurationManager.AppSettings["MailUsername"];
+			correo.Password = ConfigurationManager.AppSettings["MailPassword"];
+			correo.From = new System.Net.Mail.MailAddress(ConfigurationManager.AppSettings["MailFrom"]);
+			correo.IsHtml = false;
+			correo.BodyEncoding = UTF8Encoding.UTF8;
+			correo.To = ConfigurationManager.AppSettings["MailTo"].ToMailAddressCollection(new char[] { ';', ',' });
 
 			try
 			{
@@ -100,13 +112,20 @@ namespace Services.Datawarehouse
 					var startDate = currentTime.Date.AddDays(-daysBefore).ToString("yyyy-MM-dd");
 					var finishDate = currentTime.Date.ToString("yyyy-MM-dd");
 					var dataWarehouseOps = new DataWarehouseOps(CommonDatabaseUtilities.CurrentActiveConnectionString());
+					var dataOps = new DataWarehouseOps(ConfigurationManager.ConnectionStrings["PrimasoftPrdConnection"].ConnectionString);
 
-					infoMessage.AppendLine(string.Format("-> Fechas de proceso desde: {0} hasta:{1}", startDate, finishDate));
-					infoMessage.AppendLine("-> 1. Obtener informacion desde PS");
-					dataWarehouseOps.GetProductionFromPS(startDate, finishDate, ref infoMessage);
+					if (dataOps.TestExternalConnection(ref infoMessage))
+					{
+						infoMessage.AppendLine(string.Format("-> Fechas de proceso desde: {0} hasta:{1}", startDate, finishDate));
+						infoMessage.AppendLine("-> 1. Obtener informacion desde PS");
+						dataWarehouseOps.GetProductionFromPS(startDate, finishDate, ref infoMessage);
 
-					infoMessage.AppendLine("-> 2. Envio de informacion a DW");
-					dataWarehouseOps.SendProductionToDW(startDate, finishDate, ref infoMessage);
+						infoMessage.AppendLine("-> 2. Envio de informacion a DW");
+						dataWarehouseOps.SendProductionToDW(startDate, finishDate, ref infoMessage);
+					}
+
+					correo.Subject = "Report Production Status - Process OK";
+					sendAEmail = Convert.ToBoolean(ConfigurationManager.AppSettings["SendAEmailOnOkProcess"]);
 				}
 				else
 				{
@@ -114,6 +133,8 @@ namespace Services.Datawarehouse
 					infoMessage.AppendLine("Gracias por su comprensión.");
 
 					eventType = EventLogEntryType.Warning;
+					correo.Subject = "Report Production Status - Idle Process";
+					sendAEmail = Convert.ToBoolean(ConfigurationManager.AppSettings["SendAEmailOnIdleProcess"]);
 				}
 			}
 			catch (Exception ex)
@@ -127,6 +148,9 @@ namespace Services.Datawarehouse
 				infoMessage.AppendLine("-------------------------------------------");
 
 				eventType = EventLogEntryType.Error;
+				correo.Subject = "Report Production Status - Process Failure";
+				correo.To.Add("helpdesk@rosaprima.com");
+				sendAEmail = Convert.ToBoolean(ConfigurationManager.AppSettings["SendAEmailOnFailProcess"]);
 			}
 			finally
 			{
@@ -136,6 +160,12 @@ namespace Services.Datawarehouse
 
 				infoMessage.AppendLine(string.Format("Tiempo de ejecucion: {0}", elapsedTime.TotalSeconds));
 				EvlIssue.WriteEntry(infoMessage.ToString(), eventType);
+
+				if (sendAEmail)
+				{
+					correo.BodyText = infoMessage;
+					correo.SendMail();
+				}
 
 				elapsedTime = TimeSpan.Parse(ConfigurationManager.AppSettings["KSLatencyProcess"]);
 				Thread.Sleep(elapsedTime.Milliseconds);

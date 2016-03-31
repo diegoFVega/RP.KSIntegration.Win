@@ -1,5 +1,6 @@
 ﻿using DataType.Login;
 using Engine.Operations;
+using Engine.Utilities;
 using Services.Utilities;
 using System;
 using System.Configuration;
@@ -93,6 +94,17 @@ namespace Services.Datawarehouse
 			var currentTime = DateTime.Now;
 			var startProcessTime = Convert.ToDateTime(ConfigurationManager.AppSettings["DWStartTime"]);
 			var eventType = EventLogEntryType.Information;
+			var sendAEmail = true;
+			// envio de correo
+			var correo = new MailOps();
+			correo.SmtpServer = ConfigurationManager.AppSettings["MailAddress"];
+			correo.SmtpPort = Convert.ToInt32(ConfigurationManager.AppSettings["MailPort"]);
+			correo.Username = ConfigurationManager.AppSettings["MailUsername"];
+			correo.Password = ConfigurationManager.AppSettings["MailPassword"];
+			correo.From = new System.Net.Mail.MailAddress(ConfigurationManager.AppSettings["MailFrom"]);
+			correo.IsHtml = false;
+			correo.BodyEncoding = UTF8Encoding.UTF8;
+			correo.To = ConfigurationManager.AppSettings["MailTo"].ToMailAddressCollection(new char[] { ';', ',' });
 
 			try
 			{
@@ -145,6 +157,8 @@ namespace Services.Datawarehouse
 					infoMessage.AppendLine(string.Empty);
 					infoMessage.AppendLine(string.Format("-> E. Enviando información al datawarehouse, desde {0} hasta {1}", startDate, endDate));
 					dataWarehouseOps.SendInvoicesToDW(startDate, endDate, ref infoMessage);
+					correo.Subject = "Report Sales Status - Process OK";
+					sendAEmail = Convert.ToBoolean(ConfigurationManager.AppSettings["SendAEmailOnOkProcess"]);
 				}
 				else
 				{
@@ -152,6 +166,9 @@ namespace Services.Datawarehouse
 					infoMessage.AppendLine("Gracias por su comprensión.");
 
 					eventType = EventLogEntryType.Warning;
+					correo.Subject = "Report Sales Status - Idle Process";
+					correo.To.Add("helpdesk@rosaprima.com");
+					sendAEmail = Convert.ToBoolean(ConfigurationManager.AppSettings["SendAEmailOnIdleProcess"]);
 				}
 			}
 			catch (Exception ex)
@@ -165,6 +182,8 @@ namespace Services.Datawarehouse
 				infoMessage.AppendLine("-------------------------------------------");
 
 				eventType = EventLogEntryType.Error;
+				correo.Subject = "Report Sales Status - Process Failure";
+				sendAEmail = Convert.ToBoolean(ConfigurationManager.AppSettings["SendAEmailOnFailProcess"]);
 			}
 			finally
 			{
@@ -177,6 +196,13 @@ namespace Services.Datawarehouse
 
 				elapsedTime = TimeSpan.Parse(ConfigurationManager.AppSettings["KSLatencyProcess"]);
 				Thread.Sleep(elapsedTime.Milliseconds);
+
+				if (sendAEmail)
+				{
+					correo.BodyText = infoMessage;
+					correo.SendMail();
+				}
+
 				_controlServiceTimer.Interval = IdleTimeToStart().TotalMilliseconds;
 				_controlServiceTimer.Start();
 			}

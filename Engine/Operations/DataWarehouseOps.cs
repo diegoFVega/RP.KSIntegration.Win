@@ -46,9 +46,16 @@ namespace Engine.Operations
 			catch (Exception ex)
 			{
 				stringBuilder.AppendLine("Ha ocurrido una excepcion en la ejecucion de la consulta.");
-				stringBuilder.AppendLine(string.Format("Mensaje: {0}", ex.Message));
+				stringBuilder.AppendLine(string.Empty);
+				stringBuilder.AppendLine(string.Format("Origen: {0}", ex.Source));
+				stringBuilder.AppendLine(string.Format("Error: {0}", ex.Message));
+				stringBuilder.AppendLine(string.Format("Datos: {0}", ex.Data));
 				stringBuilder.AppendLine(string.Format("Ubicacion: {0}", ex.TargetSite));
-				throw new Exception(stringBuilder.ToString());
+				stringBuilder.AppendLine(string.Empty);
+				stringBuilder.AppendLine(string.Format("Trace: {0}", ex.StackTrace));
+
+				infoMessage.AppendLine(stringBuilder.ToString());
+				throw new Exception(infoMessage.ToString());
 			}
 			finally
 			{
@@ -74,9 +81,16 @@ namespace Engine.Operations
 			catch (Exception ex)
 			{
 				stringBuilder.AppendLine("Ha ocurrido una excepcion en la ejecucion de la consulta.");
-				stringBuilder.AppendLine(string.Format("Mensaje: {0}", ex.Message));
+				stringBuilder.AppendLine(string.Empty);
+				stringBuilder.AppendLine(string.Format("Origen: {0}", ex.Source));
+				stringBuilder.AppendLine(string.Format("Error: {0}", ex.Message));
+				stringBuilder.AppendLine(string.Format("Datos: {0}", ex.Data));
 				stringBuilder.AppendLine(string.Format("Ubicacion: {0}", ex.TargetSite));
-				throw new Exception(stringBuilder.ToString());
+				stringBuilder.AppendLine(string.Empty);
+				stringBuilder.AppendLine(string.Format("Trace: {0}", ex.StackTrace));
+
+				infoMessage.AppendLine(stringBuilder.ToString());
+				throw new Exception(infoMessage.ToString());
 			}
 			finally
 			{
@@ -101,9 +115,20 @@ namespace Engine.Operations
 			catch (Exception ex)
 			{
 				stringBuilder.AppendLine("Ha ocurrido una excepcion en la ejecucion de la consulta.");
-				stringBuilder.AppendLine(string.Format("Mensaje: {0}", ex.Message));
+				stringBuilder.AppendLine(string.Empty);
+				stringBuilder.AppendLine(string.Format("Origen: {0}", ex.Source));
+				stringBuilder.AppendLine(string.Format("Error: {0}", ex.Message));
+				stringBuilder.AppendLine(string.Format("Datos: {0}", ex.Data));
 				stringBuilder.AppendLine(string.Format("Ubicacion: {0}", ex.TargetSite));
-				throw new Exception(stringBuilder.ToString());
+				stringBuilder.AppendLine(string.Empty);
+				stringBuilder.AppendLine(string.Format("Trace: {0}", ex.StackTrace));
+
+				infoMessage.AppendLine(stringBuilder.ToString());
+				throw new Exception(infoMessage.ToString());
+			}
+			finally
+			{
+				engineDataHelper.Dispose();
 			}
 		}
 
@@ -115,6 +140,7 @@ namespace Engine.Operations
 			{
 				CurrentStringConnection = _currentConnectionString
 			};
+
 			try
 			{
 				parameters.Add("fec_ini", productionDateStart);
@@ -124,9 +150,20 @@ namespace Engine.Operations
 			catch (Exception ex)
 			{
 				stringBuilder.AppendLine("Ha ocurrido una excepcion en la ejecucion de la consulta.");
-				stringBuilder.AppendLine(string.Format("Mensaje: {0}", ex.Message));
+				stringBuilder.AppendLine(string.Empty);
+				stringBuilder.AppendLine(string.Format("Origen: {0}", ex.Source));
+				stringBuilder.AppendLine(string.Format("Error: {0}", ex.Message));
+				stringBuilder.AppendLine(string.Format("Datos: {0}", ex.Data));
 				stringBuilder.AppendLine(string.Format("Ubicacion: {0}", ex.TargetSite));
-				throw new Exception(stringBuilder.ToString());
+				stringBuilder.AppendLine(string.Empty);
+				stringBuilder.AppendLine(string.Format("Trace: {0}", ex.StackTrace));
+
+				infoMessage.AppendLine(stringBuilder.ToString());
+				throw new Exception(infoMessage.ToString());
+			}
+			finally
+			{
+				engineDataHelper.Dispose();
 			}
 		}
 
@@ -144,11 +181,57 @@ namespace Engine.Operations
 			catch (Exception ex)
 			{
 				stringBuilder.AppendLine("Ha ocurrido una excepcion en la ejecucion de la consulta.");
-				stringBuilder.AppendLine(string.Format("Mensaje: {0}", ex.Message));
+				stringBuilder.AppendLine(string.Empty);
+				stringBuilder.AppendLine(string.Format("Origen: {0}", ex.Source));
+				stringBuilder.AppendLine(string.Format("Error: {0}", ex.Message));
+				stringBuilder.AppendLine(string.Format("Datos: {0}", ex.Data));
 				stringBuilder.AppendLine(string.Format("Ubicacion: {0}", ex.TargetSite));
-				infoMessage = stringBuilder;
-				throw new Exception(stringBuilder.ToString());
+				stringBuilder.AppendLine(string.Empty);
+				stringBuilder.AppendLine(string.Format("Trace: {0}", ex.StackTrace));
+
+				infoMessage.AppendLine(stringBuilder.ToString());
+				throw new Exception(infoMessage.ToString());
 			}
+			finally
+			{
+				engineDataHelper.Dispose();
+			}
+		}
+
+		public bool TestExternalConnection(ref StringBuilder infoMessage)
+		{
+			var result = false;
+			var stringBuilder = new StringBuilder();
+			var engineDataHelper = new EngineDataHelper
+			{
+				CurrentStringConnection = _currentConnectionString
+			};
+
+			try
+			{
+				engineDataHelper.TestConnection("SELECT Number, Name, ParentConnection FROM sa_conn_info();", CommandType.Text, EngineDataHelperMode.NonResultSet);
+				result = true;
+			}
+			catch (Exception ex)
+			{
+				stringBuilder.AppendLine("Ha ocurrido una excepcion en la ejecucion de la consulta.");
+				stringBuilder.AppendLine(string.Empty);
+				stringBuilder.AppendLine(string.Format("Origen: {0}", ex.Source));
+				stringBuilder.AppendLine(string.Format("Error: {0}", ex.Message));
+				stringBuilder.AppendLine(string.Format("Datos: {0}", ex.Data));
+				stringBuilder.AppendLine(string.Format("Ubicacion: {0}", ex.TargetSite));
+				stringBuilder.AppendLine(string.Empty);
+				stringBuilder.AppendLine(string.Format("Trace: {0}", ex.StackTrace));
+
+				infoMessage.AppendLine(stringBuilder.ToString());
+				throw new Exception(infoMessage.ToString());
+			}
+			finally
+			{
+				engineDataHelper.Dispose();
+			}
+
+			return result;
 		}
 	}
 }

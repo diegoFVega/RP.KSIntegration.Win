@@ -3,6 +3,7 @@ using BusinessObjects;
 using DataType.Login;
 using Engine;
 using Engine.Enum;
+using Engine.Utilities;
 using Engine.Operations;
 using System;
 using System.ComponentModel;
@@ -668,10 +669,26 @@ namespace UIX
 
 		private void button1_Click(object sender, EventArgs e)
 		{
-			var bo = new BusinessObjects.DownloadTaskforce();
-			bo.ExecuteProcess("Download");
+			//var bo = new BusinessObjects.DownloadTaskforce();
+			//bo.ExecuteProcess("Download");
 
-			MessageBox.Show("proceso finalizado exitosamente");
+			//MessageBox.Show("proceso finalizado exitosamente");
+
+			var correo = new MailOps();
+			correo.SmtpServer = ConfigurationManager.AppSettings["MailAddress"];
+			correo.SmtpPort = Convert.ToInt32(ConfigurationManager.AppSettings["MailPort"]);
+			correo.Username = ConfigurationManager.AppSettings["MailUsername"];
+			correo.Password = ConfigurationManager.AppSettings["MailPassword"];
+			correo.From = new System.Net.Mail.MailAddress(ConfigurationManager.AppSettings["MailFrom"]);
+			correo.IsHtml = true;
+			correo.BodyEncoding = UTF8Encoding.Unicode;
+			correo.To = ConfigurationManager.AppSettings["MailTo"].ToMailAddressCollection(new char[] {';',','});
+			correo.Subject = "test 1. 2. 3.";
+			var texto = new StringBuilder();
+			texto.AppendLine("Esto es una prueba");
+			texto.AppendLine("esto es otro texto");
+			correo.BodyText = texto;
+			correo.SendMail();
 		}
 
 		private void invoicesToolStripMenuItem_Click(object sender, EventArgs e)

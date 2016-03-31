@@ -1,4 +1,4 @@
-﻿using Services.Datawarehouse;
+﻿using System.ServiceProcess;
 using System.Windows.Forms;
 
 namespace Services
@@ -13,13 +13,14 @@ namespace Services
 #if DEBUG
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
-			Application.Run(new ServiceTestForm(new Customer()));
+			Application.Run(new ServiceTestForm(new Services.Datawarehouse.Customer()));
 #else
 			ServiceBase[] ServicesToRun;
 			ServicesToRun = new ServiceBase[]
 			{
-								new Production(),
-								new Sale()
+								new Services.Datawarehouse.Production(),
+								new Services.Datawarehouse.Customer(),
+								new Services.Datawarehouse.Sale()
 			};
 			ServiceBase.Run(ServicesToRun);
 #endif

@@ -38,7 +38,8 @@
 			// 
 			// Customer
 			// 
-			this.ServiceName = "Customer";
+			this.CanPauseAndContinue = true;
+			this.ServiceName = "Rosaprima Customer Datawarehouse Service";
 			((System.ComponentModel.ISupportInitialize)(this.EvlIssue)).EndInit();
 
 		}

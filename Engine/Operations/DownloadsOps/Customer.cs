@@ -37,10 +37,16 @@ namespace Engine.Operations.DownloadsOps
 			catch (Exception ex)
 			{
 				stringBuilder.AppendLine("Ha ocurrido una excepcion en la ejecucion de la consulta.");
-				stringBuilder.AppendLine(string.Format("Mensaje: {0}", ex.Message));
+				stringBuilder.AppendLine(string.Empty);
+				stringBuilder.AppendLine(string.Format("Origen: {0}", ex.Source));
+				stringBuilder.AppendLine(string.Format("Error: {0}", ex.Message));
+				stringBuilder.AppendLine(string.Format("Datos: {0}", ex.Data));
 				stringBuilder.AppendLine(string.Format("Ubicacion: {0}", ex.TargetSite));
-				infoMessage = stringBuilder;
-				throw new Exception(stringBuilder.ToString());
+				stringBuilder.AppendLine(string.Empty);
+				stringBuilder.AppendLine(string.Format("Trace: {0}", ex.StackTrace));
+
+				infoMessage.AppendLine(stringBuilder.ToString());
+				throw new Exception(infoMessage.ToString());
 			}
 
 			return tableFromJson;
@@ -61,9 +67,16 @@ namespace Engine.Operations.DownloadsOps
 			catch (Exception ex)
 			{
 				stringBuilder.AppendLine("Ha ocurrido una excepcion en la ejecucion de la consulta.");
-				stringBuilder.AppendLine(string.Format("Mensaje: {0}", ex.Message));
+				stringBuilder.AppendLine(string.Empty);
+				stringBuilder.AppendLine(string.Format("Origen: {0}", ex.Source));
+				stringBuilder.AppendLine(string.Format("Error: {0}", ex.Message));
+				stringBuilder.AppendLine(string.Format("Datos: {0}", ex.Data));
 				stringBuilder.AppendLine(string.Format("Ubicacion: {0}", ex.TargetSite));
-				throw new Exception(stringBuilder.ToString());
+				stringBuilder.AppendLine(string.Empty);
+				stringBuilder.AppendLine(string.Format("Trace: {0}", ex.StackTrace));
+
+				infoMessage.AppendLine(stringBuilder.ToString());
+				throw new Exception(infoMessage.ToString());
 			}
 
 			return tableFromJson;

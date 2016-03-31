@@ -52,6 +52,7 @@ namespace Engine.Operations
 			message.Body = BodyText.ToString();
 			message.BodyEncoding = BodyEncoding;
 			message.IsBodyHtml = IsHtml;
+			smtpClient.EnableSsl = true;
 			smtpClient.SendCompleted += SmtpClient_OnCompleted;
 			smtpClient.SendAsync(message, userToken);
 		}

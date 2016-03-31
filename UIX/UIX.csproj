@@ -45,6 +45,7 @@
     <Reference Include="iAnywhere.Data.SQLAnywhere.v4.0, Version=16.0.0.20524, Culture=neutral, PublicKeyToken=f222fc4333e0d400, processorArchitecture=MSIL">
       <Private>True</Private>
     </Reference>
+    <Reference Include="iAnywhere.Data.SQLAnywhere.v4.5, Version=16.0.0.21934, Culture=neutral, PublicKeyToken=f222fc4333e0d400, processorArchitecture=MSIL" />
     <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.8.0.1\lib\net40\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
@@ -52,7 +53,9 @@
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Data.Entity" />
     <Reference Include="System.Net" />
+    <Reference Include="System.Transactions" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
